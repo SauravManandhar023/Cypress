@@ -17,6 +17,7 @@ describe("Login Test 001 - Valid Registration", () => {
       expect(interception.response.statusCode).to.eq(200);
       expect(interception.response.body.url).to.eq("https://qc.sewaverse.com/login");
       expect(interception.response.body.url).to.not.include('error=').and.not.include('CredentialsSignin');
+      expect(interception.response.body.url).to.not.include("code=Invalid+credentials");
     });
     // UI Validation
       cy.url().should("eq", "https://qc.sewaverse.com/");
