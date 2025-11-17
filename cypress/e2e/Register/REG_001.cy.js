@@ -4,7 +4,7 @@ describe("Registration Test 001 - Valid Registration", () => {
 
   beforeEach(() => {
     // Set viewport and visit the application
-    cy.viewport(1280, 1080);
+    cy.viewport(1280, 720);
     cy.visit("https://qc.sewaverse.com");
   });
 

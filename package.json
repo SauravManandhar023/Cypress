@@ -12,5 +12,8 @@
   "dependencies": {
     "axios": "^1.13.2",
     "cypress": "^15.6.0"
+  },
+  "devDependencies": {
+    "cypress-file-upload": "^5.0.8"
   }
 }
