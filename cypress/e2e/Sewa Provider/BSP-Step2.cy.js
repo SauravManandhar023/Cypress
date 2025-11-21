@@ -346,7 +346,7 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
   //     cy.contains('button[type="button"]', "Capture Photo").click();
   //   });
 
-  it("BSP-019 Should accept valid profession input", () => {
+  it("BSP_019 Should accept valid profession input", () => {
     cy.log("Testing BSP-019: Should accept valid profession input");
 
     cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
@@ -393,7 +393,7 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
     cy.get("h1.gradient-text").eq(2).should("contain", "3 years");
   });
 
-  it("BSP-021 Should select existing services in offered service type", () => {
+  it("BSP_021 Should select existing services in offered service type", () => {
     cy.log("Testing BSP-021:  Offered Service Types - Add Service");
 
     cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
@@ -444,8 +444,8 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
       );
   });
 
-  it("BSP-023 Should select exisiting product in offered services type", () => {
-    cy.log("Testing BSP-023:  Offered Service Types - Adding Product");
+  it("BSP_022 Should select exisiting product in offered services type", () => {
+    cy.log("Testing BSP-022:  Offered Service Types - Adding Product");
 
     cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
     cy.log("Page loaded successfully");
@@ -456,6 +456,7 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
     });
 
     cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
     cy.contains("button", "Product").click();
     cy.contains("button", "Jewelry & Accessories").click();
     cy.contains("Jewelry (Gold-plated, Artificial)")
@@ -489,8 +490,8 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
       .should("contain", "Jewelry (Gold-plated, Artificial), Beverages");
   });
 
-  it("BSP-024 Should add new services in offered service type", () => {
-    cy.log("Testing BSP-024:  Offered Service Types - Adding New Services");
+  it("BSP_023 Should add new services in offered service type", () => {
+    cy.log("Testing BSP-023:  Offered Service Types - Adding New Services");
 
     cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
     cy.log("Page loaded successfully");
@@ -501,6 +502,7 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
     });
 
     cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
     cy.contains("button", "Add New").click();
     cy.contains("Add New Service Category").should("be.visible");
     cy.get('input[placeholder="Service category name"]').type("Design");
@@ -516,12 +518,275 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
       cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
     });
 
+    //Validate
+    cy.get("h1.gradient-text").eq(3).should("contain", "Web Design");
+  });
+
+  it("BSP_024 Should add new product in offered service type", () => {
+    cy.log("Testing BSP-024:  Offered Service Types - Adding New Product");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
     // Log all h1.gradient-text elements
     cy.get("h1.gradient-text").each(($h1, index) => {
       cy.log(`h1[${index}]: ${$h1.text()}`);
     });
 
+    cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
+    cy.contains("button", "Product").click();
+    cy.contains("button", "Add New").click();
+    cy.contains("Add New Product Category").should("be.visible");
+    cy.get('input[placeholder="Product category name"]').type("Mobile");
+    cy.get('input[placeholder="First product subcategory (optional)"]').type(
+      "Samsung"
+    );
+    cy.contains("button", "Add Category").click();
+    cy.contains("button", "Save Selection").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
     //Validate
-    cy.get("h1.gradient-text").eq(3).should("contain", "Web Design");
+    cy.get("h1.gradient-text").eq(3).should("contain", "Samsung");
+  });
+
+  it("BSP_025 Should search and add service by category name", () => {
+    cy.log("Testing BSP-025: Search Service by Category Name");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
+    cy.get('input[placeholder="Search services..."]').type("IT Sewa");
+    cy.contains("button", "Search").click();
+    cy.wait(2000);
+
+    cy.contains("button", "IT Sewa")
+      .should("be.visible")
+      .find("span")
+      .and("have.class", "bg-yellow-100");
+
+    cy.log("Searched Service highlighted");
+
+    cy.contains("button", "IT Sewa").click();
+    cy.contains("App Development")
+      .parent()
+      .find('button[role="checkbox"]')
+      .click();
+    cy.contains("categories selected").find("span").should("contain", "1");
+    cy.contains("button", "Save Selection").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
+    //Validate
+    cy.get("h1.gradient-text").eq(3).should("contain", "App Development");
+  });
+
+  it("BSP_026 Should search and add product by category name", () => {
+    cy.log("Testing BSP-026: Search Product by Category Name");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
+    cy.contains("button", "Product").click();
+    cy.get('input[placeholder="Search products..."]').type(
+      "Electronics & Appliances"
+    );
+    cy.contains("button", "Search").click();
+    cy.wait(2000);
+
+    cy.contains("button", "Electronics & Appliances")
+      .should("be.visible")
+      .find("span")
+      .and("have.class", "bg-yellow-100");
+
+    cy.log("Searched Product highlighted");
+
+    cy.contains("button", "Electronics & Appliances").click();
+    cy.contains("Gaming").parent().find('button[role="checkbox"]').click();
+    cy.contains("categories selected").find("span").should("contain", "1");
+    cy.contains("button", "Save Selection").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
+    //Validate
+    cy.get("h1.gradient-text").eq(3).should("contain", "Gaming");
+  });
+
+  it("BSP_027: Should search and add service by subcategory name", () => {
+    cy.log("Testing BSP-027: Search Service by Subcategory Name");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
+    cy.get('input[placeholder="Search services..."]').type("App Development");
+    cy.contains("button", "Search").click();
+    cy.wait(2000);
+
+    cy.contains("button", "IT Sewa").should("be.visible").click();
+
+    cy.contains("App Development")
+      .should("be.visible")
+      .and("have.class", "bg-yellow-100");
+
+    cy.log("Searched Service highlighted");
+
+    cy.contains("App Development")
+      .parent()
+      .find('button[role="checkbox"]')
+      .click();
+    cy.contains("categories selected").find("span").should("contain", "1");
+    cy.contains("button", "Save Selection").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
+    //Validate
+    cy.get("h1.gradient-text").eq(3).should("contain", "App Development");
+  });
+
+  it("BSP_028: Should search and add product by subcategory name", () => {
+    cy.log("Testing BSP-028: Search Product by Subcategory Name");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Sewa").click();
+    cy.contains("Choose Your Service Types").should("be.visible");
+    cy.contains("button", "Product").click();
+    cy.get('input[placeholder="Search products..."]').type("Gaming");
+    cy.contains("button", "Search").click();
+    cy.wait(2000);
+
+    cy.contains("button", "Electronics & Appliances")
+      .should("be.visible")
+      .click();
+
+    cy.contains("Gaming")
+      .should("be.visible")
+      .and("have.class", "bg-yellow-100");
+
+    cy.log("Searched Product highlighted");
+
+    cy.contains("Gaming").parent().find('button[role="checkbox"]').click();
+    cy.contains("categories selected").find("span").should("contain", "1");
+    cy.contains("button", "Save Selection").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
+    //Validate
+    cy.get("h1.gradient-text").eq(3).should("contain", "Gaming");
+  });
+
+  it("BSP_029: Should add core skill", () => {
+    cy.log("Testing BSP-029: Core Skills - Add Skills");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all span.gradient-text elements
+    cy.get("span.gradient-text").each(($span, index) => {
+      cy.log(`span[${index}]: ${$span.text()}`);
+    });
+
+    cy.get('input[placeholder="Core Skills (Required*)"]').type("QA");
+    cy.get(".lucide-plus").parent().click();
+
+    cy.get('input[placeholder="Core Skills (Required*)"]').type("Designer");
+    cy.get(".lucide-plus").parent().click();
+
+    cy.get('input[placeholder="Core Skills (Required*)"]').type("Developer");
+    cy.get(".lucide-plus").parent().click();
+
+    cy.get('input[placeholder="Core Skills (Required*)"]').type("Manager");
+    cy.get(".lucide-plus").parent().click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("span.gradient-text").each(($span, index) => {
+      cy.log(`After addinig core skills - span[${index}]: ${$span.text()}`);
+    });
+
+    //Validate
+    cy.get("span.gradient-text").eq(1).should("contain", "QA");
+    cy.get("span.gradient-text").eq(2).should("contain", "Designer");
+    cy.get("span.gradient-text").eq(3).should("contain", "Developer");
+    cy.get("span.gradient-text").eq(4).should("contain", "Manager");
+  });
+
+  it("BSP_030: Should set specific coverage to all over nepal", () => {
+    cy.log("Testing BSP-030: Set Specific Coverage to all over Nepal");
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Location").click();
+    cy.contains("Location of Service").should("be.visible");
+
+    cy.contains("div", "All over Nepal")
+      .parent()
+      .find('button[role="checkbox"]')
+      .click();
+
+    cy.contains("button", "Save Location").click();
+
+    //Check which h1 element changed
+    // Log all h1 elements again to see which one changed
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`After selecting - h1[${index}]: ${$h1.text()}`);
+    });
+
+    //Validate
+    cy.get("h1.gradient-text").eq(4).should("contain", "All over Nepal");
   });
 });
