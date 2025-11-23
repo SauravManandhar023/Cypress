@@ -323,8 +323,56 @@ describe("Sewa Provider Profile Page", () => {
 
   it("PP_001 - Should load the profile page", () => {
     cy.url().should("eq", "https://qc.sewaverse.com/profile");
-    cy.contains(".backdrop-blur-sm", "About Me").should("be.visible");
+    cy.log("Url matched");
+
+    cy.get(".bg-white.shadow-lg.rounded-3xl").should("be.visible");
+    cy.log("Profile card visible");
+
+    cy.get("#about-me").should("be.visible");
+    cy.log("About Me section visible");
+
+    cy.get("#experience").should("be.visible");
+    cy.log("Experience section visible");
+
+    cy.get("#licenses").should("be.visible");
+    cy.log("Licenses section visible");
+
+    cy.get("#awards-achievements").should("be.visible");
+    cy.log("Awards & Achievements section visible");
+
+    cy.get("#my-works").should("be.visible");
+    cy.log("My Works section visible");
+
+    cy.get("#ratings-reviews").should("be.visible");
+    cy.log("Ratings & Reviews section visible");
+
+    cy.get("#offered-services").should("be.visible");
+    cy.log("Offered Services section visible");
+
+    cy.get("footer").should("be.visible");
 
     cy.log("✅ Profile page loaded successfully");
+  });
+
+  it("PP_002: Should verify that profile header displays correct information", () => {
+    cy.request({
+      method: "GET",
+      url: "https://qc.sewaverse.com/api/service-provider/profile",
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(response.status).to.equal(200);
+      expect(response.body.success).to.be.true;
+
+      const userData = response.body.serviceProvider;
+      cy.get("h2.truncate").should("contain", userData.name);
+      cy.log("Profile Name displayed correctly");
+
+      const apiDate = userData.createdAt;
+      const date = new Date(apiDate);
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const expectedDate = date.toLocaleDateString("en-Us", options);
+
+      cy.contains("Joined on: ").should("contain", expectedDate);
+    });
   });
 });
