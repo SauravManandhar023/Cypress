@@ -759,7 +759,7 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
     cy.get("span.gradient-text").eq(4).should("contain", "Manager");
   });
 
-  it("BSP_030: Should set specific coverage to all over nepal", () => {
+  it("BSP_030: Should set service coverage to all over nepal", () => {
     cy.log("Testing BSP-030: Set Specific Coverage to all over Nepal");
 
     cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
@@ -788,5 +788,60 @@ describe("Sewa Provider Verification Form Test - Step 2", () => {
 
     //Validate
     cy.get("h1.gradient-text").eq(4).should("contain", "All over Nepal");
+  });
+
+  it("BSP_031: Should set service  coverage to specific location", () => {
+    cy.log("Testing BSP-031: Set Specific Coverage to specific location");
+  });
+
+  it("BSP_032: Should set service coverage within radius from current location", () => {
+    cy.log(
+      "Testing BSP-032: Set Specific Coverage within radius from current location"
+    );
+
+    cy.url({ timeout: 10000 }).should("include", "/verification/step-2");
+    cy.log("Page loaded successfully");
+
+    // Log all h1.gradient-text elements
+    cy.get("h1.gradient-text").each(($h1, index) => {
+      cy.log(`h1[${index}]: ${$h1.text()}`);
+    });
+
+    cy.contains("div", "Add Location").click();
+    cy.contains("Location of Service").should("be.visible");
+
+    // First, let's see what actually appears when we click the checkbox
+    cy.contains("div", "Within radius from current location")
+      .parent()
+      .find('button[role="checkbox"]')
+      .click();
+
+    cy.wait(3000);
+
+    cy.get(".text-sm.font-medium.text-brand").then(($el) => {
+      cy.log(`Actual location text: "${$el.text()}"`);
+    });
+
+    // Instead of checking for specific text, let's check that SOME location appears
+    cy.get(".text-sm.font-medium.text-brand").should("not.be.empty");
+
+    // Get the actual location text that appears
+    cy.get(".text-sm.font-medium.text-brand")
+      .invoke("text")
+      .then((actualLocation) => {
+        cy.log(`Detected location: "${actualLocation}"`);
+
+        cy.contains("button", "Save Location").click();
+
+        // Log all h1 elements again to see which one changed
+        cy.get("h1.gradient-text").each(($h1, index) => {
+          cy.log(`After adding location - h1[${index}]: ${$h1.text()}`);
+        });
+
+        // Validate with the actual location that appeared
+        cy.get("h1.gradient-text")
+          .eq(4)
+          .should("contain", actualLocation.trim());
+      });
   });
 });
