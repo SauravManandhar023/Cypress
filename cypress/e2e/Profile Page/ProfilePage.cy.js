@@ -363,16 +363,105 @@ describe("Sewa Provider Profile Page", () => {
       expect(response.status).to.equal(200);
       expect(response.body.success).to.be.true;
 
+      //1.Check Name
       const userData = response.body.serviceProvider;
       cy.get("h2.truncate").should("contain", userData.name);
       cy.log("Profile Name displayed correctly");
 
+      //2.Check Joined Date
       const apiDate = userData.createdAt;
       const date = new Date(apiDate);
       const options = { year: "numeric", month: "long", day: "numeric" };
       const expectedDate = date.toLocaleDateString("en-Us", options);
 
       cy.contains("Joined on: ").should("contain", expectedDate);
+      cy.log("Joined date displayed correctly");
+
+      //4.Check Service Delivered
+      cy.contains("No Services Delivered Yet").should("be.visible");
+      cy.log("Service Delivered displayed correctly");
+
+      // Log all span.gradient-text elements
+      cy.get("span.gradient-text").each(($span, index) => {
+        cy.log(`span[${index}]: ${$span.text()}`);
+      });
+
+      //4. Check Profession
+      const profileCard = response.body.serviceProvider.profile;
+      cy.get("span.gradient-text")
+        .eq(0)
+        .should("contain", profileCard.profession);
+      cy.log("Profession displayed correctly");
+
+      //5. Check Experience
+      cy.get("span.gradient-text")
+        .eq(1)
+        .should("contain", profileCard.experience);
+      cy.log("Experience displayed correctly");
+
+      //6. Check Rating
+      cy.get("p.text-sm.sm\\:text-base.ml-1").should(
+        "contain",
+        profileCard.overallRating
+      );
+      cy.log("Rating displayed correctly");
+
+      //7. Check Offered Service Types
+      const userServices = response.body.serviceProvider.serviceCategories;
+
+      if (userServices.length > 0) {
+        cy.get("span.gradient-text")
+          .eq(2)
+          .should("contain", userServices[0].name);
+        cy.log(
+          `First service category "${userServices[0].name}" displayed correctly`
+        );
+        cy.get("span.gradient-text")
+          .eq(3)
+          .should("contain", userServices[2].name);
+        cy.log(
+          `Second service category "${userServices[2].name}" displayed correctly`
+        );
+      } else {
+        cy.log("No service categories found");
+      }
+
+      //8. Check Locatioon of service
+      const userLocation = response.body.serviceProvider.locations[0];
+
+      if (userLocation.allOverNepal) {
+        cy.contains("p.gradient-text", "All over Nepal").should("be.visible");
+        cy.log("Location: All over Nepal displayed correctly");
+      } else if (userLocation.district) {
+        cy.contains("p.gradient-text", userLocation.district).should(
+          "be.visible"
+        );
+        cy.log(`Location: ${userLocation.district} displayed correctly`);
+      } else if (userLocation.radius) {
+        cy.contains("p.gradient-text", userLocation.radius).should(
+          "be.visible"
+        );
+        cy.log(`Location: ${userLocation.radius} displayed correctly`);
+      }
+
+      //9. Check Core Skills
+      cy.get("span.gradient-text")
+        .eq(4)
+        .should("contain", profileCard.skills[0]);
+
+      cy.get("span.gradient-text")
+        .eq(5)
+        .should("contain", profileCard.skills[1]);
+
+      cy.get("span.gradient-text")
+        .eq(6)
+        .should("contain", profileCard.skills[2]);
+
+      cy.get("span.gradient-text")
+        .eq(7)
+        .should("contain", profileCard.skills[3]);
     });
+
+    cy.log("✅ Profile header displayed correctly");
   });
 });
